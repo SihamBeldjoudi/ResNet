@@ -1,6 +1,3 @@
-Voici un modèle de **README** pour GitHub avec une explication détaillée de l'architecture et du code, formatée pour être facile à comprendre par les utilisateurs. Vous pouvez l'ajouter dans le fichier `README.md` de votre dépôt.
-
----
 
 # ResNet20 pour la Classification CIFAR-10
 
