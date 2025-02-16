@@ -182,6 +182,3 @@ pip install -r requirements.txt
 
 Ce projet est sous la licence Apache. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
 
----
-
-En ajoutant ce **README** à votre dépôt GitHub, vous fournissez aux utilisateurs toutes les informations nécessaires pour comprendre l'architecture du modèle, son fonctionnement et comment l'utiliser pour entraîner et évaluer le modèle sur **CIFAR-10**.
