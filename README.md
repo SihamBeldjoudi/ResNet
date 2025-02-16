@@ -180,7 +180,7 @@ pip install -r requirements.txt
 
 ## License
 
-Ce projet est sous la licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+Ce projet est sous la licence Apache. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
 
 ---
 
