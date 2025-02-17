@@ -171,17 +171,15 @@ Une couche récurrente convolutive `ConvRNN` a été définie et intégrée dans
 ### Variantes explorées
 
 #### ResNet + ConvRNN
-\[ H^t = \tanh( W_h * [X^t, H^{t-1}] + b_h ) \]
+H_t = tanh(W_h * [X_t, H_{t-1}] + b_h)
+
 
 #### ResNet + ConvGRU
-\[
-\begin{aligned}
-z^t &= \sigma(W_z * [X^t, H^{t-1}] + b_z) \\
-r^t &= \sigma(W_r * [X^t, H^{t-1}] + b_r) \\
-\tilde{H}^t &= \tanh(W_h * [X^t, (r^t \odot H^{t-1})] + b_h) \\
-H^t &= (1 - z^t) \odot H^{t-1} + z^t \odot \tilde{H}^t
-\end{aligned}
-\]
+z_t = σ(W_z * [X_t, H_{t-1}] + b_z)
+r_t = σ(W_r * [X_t, H_{t-1}] + b_r)
+H̃_t = tanh(W_h * [X_t, (r_t ⊙ H_{t-1})] + b_h)
+H_t = (1 - z_t) ⊙ H_{t-1} + z_t ⊙ H̃_t
+
 
 ### Entraînement et évaluation
 L'entraînement a été réalisé via la fonction `train_model`, en testant :
