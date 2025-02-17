@@ -151,9 +151,6 @@ Après l'entraînement, des images sont sélectionnées aléatoirement à partir
 ---
 
 
-## Partie 1 : Introduction
-Dans ce projet, l'utilisation de réseaux de neurones récurrents convolutifs (ConvRNN) et de variantes comme le ConvGRU pour la classification d'images a été explorée. L'objectif est d'intégrer des mémoires récurrentes dans un modèle de type ResNet afin d'exploiter des informations temporelles dans les données d'image. PyTorch a été utilisé pour l'implémentation, et le modèle a été testé sur le dataset CIFAR-10.
-
 ## Partie 2 : Implémentation du Modèle Basé sur RegNet
 
 ### Contexte
@@ -165,27 +162,83 @@ Une couche récurrente convolutive `ConvRNN` a été définie et intégrée dans
 **Structures mises en place :**
 
 - **ConvRNN** : Applique une récurrence sur des cartes de caractéristiques convolutives.
+- **ConvGRU** : Variante avancée du ConvRNN, intégrant des portes pour mieux gérer l'information.
 - **BasicRNNBlock** : Bloc de ResNet modifié avec une couche récurrente (`ConvRNN` ou `ConvGRU`).
 - **ResNetRNN** : Architecture ResNet intégrant ces blocs récurrents.
 
 ### Variantes explorées
 
 #### ResNet + ConvRNN
-H_t = tanh(W_h * [X_t, H_{t-1}] + b_h)
 
+Le modèle **ResNet + ConvRNN** intègre une couche récurrente convolutive simple, permettant de capturer les dépendances spatiales dans l'image. L'équation de mise à jour de l'état caché est donnée par :
+
+\[ H^t = \tanh( W_h * [X^t, H^{t-1}] + b_h ) \]
+
+Voici l'implémentation de `ConvRNN` en PyTorch :
+
+```python
+class ConvRNN(nn.Module):
+    def __init__(self, in_channels, hidden_channels):
+        super(ConvRNN, self).__init__()
+        self.hidden_channels = hidden_channels
+        self.conv_x = nn.Conv2d(in_channels + hidden_channels, hidden_channels, kernel_size=3, padding=1)
+
+    def forward(self, x, h):
+        if h is None or h.shape[1] != self.hidden_channels:
+            h = torch.zeros(x.shape[0], self.hidden_channels, x.shape[2], x.shape[3], device=x.device)
+
+        x = torch.cat([x, h], dim=1)
+        x = self.conv_x(x)
+        return torch.tanh(x)
+```
 
 #### ResNet + ConvGRU
-z_t = σ(W_z * [X_t, H_{t-1}] + b_z)
-r_t = σ(W_r * [X_t, H_{t-1}] + b_r)
-H̃_t = tanh(W_h * [X_t, (r_t ⊙ H_{t-1})] + b_h)
-H_t = (1 - z_t) ⊙ H_{t-1} + z_t ⊙ H̃_t
 
+Le modèle **ResNet + ConvGRU** améliore le ConvRNN en ajoutant des **portes de mise à jour et de réinitialisation**, permettant une meilleure gestion des informations passées. Les équations de mise à jour sont :
+
+\[
+\begin{aligned}
+    z^t &= \sigma(W_z * [X^t, H^{t-1}] + b_z) \\
+    r^t &= \sigma(W_r * [X^t, H^{t-1}] + b_r) \\
+    \tilde{H}^t &= \tanh(W_h * [X^t, (r^t \odot H^{t-1})] + b_h) \\
+    H^t &= (1 - z^t) \odot H^{t-1} + z^t \odot \tilde{H}^t
+\end{aligned}
+\]
+
+Voici l'implémentation de `ConvGRU` en PyTorch :
+
+```python
+class ConvGRU(nn.Module):
+    def __init__(self, in_channels, hidden_channels):
+        super(ConvGRU, self).__init__()
+        self.hidden_channels = hidden_channels
+        self.conv_x = nn.Conv2d(in_channels + hidden_channels, 2 * hidden_channels, kernel_size=3, padding=1)
+        self.conv_y = nn.Conv2d(in_channels + 2*hidden_channels, hidden_channels, kernel_size=3, padding=1)
+
+    def forward(self, x, h):
+        if h is None or h.shape[1] != self.hidden_channels:
+            h = torch.zeros(x.shape[0], self.hidden_channels, x.shape[2], x.shape[3], device=x.device)
+
+        x = torch.cat([x, h], dim=1)
+        gates = self.conv_x(x)
+        a, b = torch.split(gates, self.hidden_channels, dim=1)
+        a, b = torch.sigmoid(a), torch.sigmoid(b)
+
+        y = torch.cat([x, b * h], dim=1)
+        y = torch.tanh(self.conv_y(y))
+        h = a * h + (1 - a) * y
+
+        return h
+```
 
 ### Entraînement et évaluation
 L'entraînement a été réalisé via la fonction `train_model`, en testant :
 
 1. **ConvRNN** comme module récurrent de base.
 2. **ConvGRU**, une alternative plus avancée et performante.
+
+
+
 
 Les modèles entraînés ont ensuite été évalués sur CIFAR-10, et leurs prédictions ont été visualisées.
 
