@@ -216,7 +216,7 @@ L'entraînement a été réalisé via la fonction `train_model`, en testant :
 
 Les modèles entraînés ont ensuite été évalués sur CIFAR-10 et nos donnees personnelles pour la classification de viande (avec 4 classes), et leurs prédictions ont été visualisées.
 
-## RegNet-400MF sur CIFAR-10 et Données Personnelles
+## Partie 3:  RegNet-400MF sur CIFAR-10 et Données Personnelles
 
 Cette troisieme partie met en œuvre le réseau neuronal **RegNet-400MF** pour la classification d'images sur le dataset **CIFAR-10** et sur une base de données personnelle contenant **4 classes de pièces de viande**. L'objectif est de comparer les performances de RegNet-400MF avec nos propres modèles **ResNet-20 + ConvRNN et ConvGRU**, en nous inspirant de l'architecture de l'article *RegNet: Self-Regulated Network for Image Classification*.
 
