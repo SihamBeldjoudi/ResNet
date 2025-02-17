@@ -1,11 +1,11 @@
-
 ## Partie 1 : ResNet20 pour la Classification 
 
-Ce dépôt contient une implémentation de **ResNet** pour la classification d'images sur le dataset **CIFAR-10**. **ResNet20** est une version simplifiée de l'architecture **ResNet** (Residual Network), utilisée pour résoudre les problèmes de dégradation des performances dans les réseaux de neurones profonds. L'implémentation est faite en utilisant **PyTorch**.
+Ce dépôt contient Notre implémentation de **ResNet** pour la classification d'images sur le dataset **CIFAR-10**. Notre version **ResNet20** est une version simplifiée de l'architecture **ResNet** (Residual Network), utilisée pour résoudre les problèmes de dégradation des performances dans les réseaux de neurones profonds. 
+L'implémentation est faite en utilisant **PyTorch**.
 
 ## Architecture
 
-L'architecture **ResNet20** est composée de 20 couches et utilise des **blocs résiduels** pour faciliter l'entraînement et améliorer la performance des réseaux profonds.
+L'architecture **ResNet20** utilise des **blocs résiduels** pour faciliter l'entraînement et améliorer la performance des réseaux profonds.
 
 ### Vue d'ensemble de l'architecture :
 
@@ -32,22 +32,6 @@ Chaque **bloc résiduel** est constitué de deux **convolutions 3x3** successive
 
 - Si les dimensions d'entrée et de sortie sont identiques, l'entrée est ajoutée à la sortie du bloc.
 - Si les dimensions diffèrent (par exemple, en cas de réduction de taille), un **raccourci** avec une **convolution 1x1** est utilisé pour ajuster les dimensions.
-
----
-
-### Architecture détaillée
-
-| Étape                  | Type de couche            | Sortie (dimension)            |
-|------------------------|---------------------------|-------------------------------|
-| **Entrée**             | Image 32x32 (RGB)         | (3, 32, 32)                   |
-| **Première couche**    | Convolution 3x3, 16 filtres| (16, 32, 32)                  |
-| **Layer 1**            | 3 blocs résiduels (stride 1)| (16, 32, 32)                  |
-| **Layer 2**            | 3 blocs résiduels (stride 2)| (32, 16, 16)                  |
-| **Layer 3**            | 3 blocs résiduels (stride 2)| (64, 8, 8)                    |
-| **Global Average Pooling** | Moyenne de chaque carte de caractéristiques | (64, 1, 1) |
-| **Fully Connected**    | Couche linéaire (10 classes) | (10)                           |
-
----
 
 ## Code du Modèle
 
@@ -150,7 +134,6 @@ Après l'entraînement, des images sont sélectionnées aléatoirement à partir
 
 ---
 
-
 ## Partie 2 : Implémentation du Modèle Basé sur RegNet
 
 ### Contexte
@@ -226,10 +209,7 @@ L'entraînement a été réalisé via la fonction `train_model`, en testant :
 1. **ConvRNN** comme module récurrent de base.
 2. **ConvGRU**, une alternative plus avancée et performante.
 
-
-
-
-Les modèles entraînés ont ensuite été évalués sur CIFAR-10, et leurs prédictions ont été visualisées.
+Les modèles entraînés ont ensuite été évalués sur CIFAR-10 et nos donnees personnelles pour la classification de viande (avec 4 classes), et leurs prédictions ont été visualisées.
 
 
 ### Installation
