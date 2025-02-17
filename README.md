@@ -216,6 +216,170 @@ L'entraînement a été réalisé via la fonction `train_model`, en testant :
 
 Les modèles entraînés ont ensuite été évalués sur CIFAR-10 et nos donnees personnelles pour la classification de viande (avec 4 classes), et leurs prédictions ont été visualisées.
 
+## RegNet-400MF sur CIFAR-10 et Données Personnelles
+
+Cette troisieme partie met en œuvre le réseau neuronal **RegNet-400MF** pour la classification d'images sur le dataset **CIFAR-10** et sur une base de données personnelle contenant **4 classes de pièces de viande**. L'objectif est de comparer les performances de RegNet-400MF avec nos propres modèles **ResNet-20 + ConvRNN et ConvGRU**, en nous inspirant de l'architecture de l'article *RegNet: Self-Regulated Network for Image Classification*.
+
+## Modèle Utilisé
+
+- **RegNet-Y 400MF**, avec une dernière couche ajustée pour **10 classes** (CIFAR-10) et **4 classes** (notre dataset)
+
+## Prétraitement des Données
+
+Le prétraitement des données est essentiel pour garantir de bonnes performances. Voici les principales étapes :
+
+```python
+import torchvision.transforms as transforms
+
+transform = transforms.Compose([
+    transforms.Resize((224, 224)), # Taille adaptée à RegNet
+    transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+])
+```
+
+Nous chargeons les jeux de données CIFAR-10 et notre propre base de données de 4 classes :
+
+```python
+import torchvision
+
+batch_size = 64
+trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=2)
+```
+
+## Entraînement du Modèle
+
+Nous utilisons **SGD** comme optimiseur et **CrossEntropyLoss** comme critère de perte.
+
+```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torchvision.models import regnet_y_400mf
+
+model = regnet_y_400mf(pretrained=False)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+# Modification de la dernière couche pour 10 classes
+num_ftrs = model.fc.in_features
+model.fc = nn.Linear(num_ftrs, 10) # 10 classes pour CIFAR-10
+model = model.to(device)
+
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
+```
+
+Ajustement du taux d'apprentissage :
+
+```python
+def adjust_learning_rate(optimizer, epoch):
+    lr = 0.01 if epoch >= 8 else 0.1
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = lr
+```
+
+Boucle d'entraînement :
+
+```python
+num_epochs = 10
+for epoch in range(num_epochs):
+    model.train()
+    adjust_learning_rate(optimizer, epoch)
+    running_loss = 0.0
+    correct = 0
+    total = 0
+    
+    for images, labels in trainloader:
+        images, labels = images.to(device), labels.to(device)
+        optimizer.zero_grad()
+        outputs = model(images)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+        
+        running_loss += loss.item()
+        _, predicted = torch.max(outputs, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+    
+    accuracy = 100 * correct / total
+    print(f"Epoch {epoch+1}/{num_epochs}, Accuracy: {accuracy:.2f}%, Loss: {running_loss/len(trainloader):.4f}")
+```
+
+## Évaluation et Comparaison
+
+Nous testons nos modèles sur **CIFAR-10** et notre dataset personnel de **4 classes** pour comparer leurs performances.
+
+```python
+model.eval()
+correct = 0
+total = 0
+with torch.no_grad():
+    for images, labels in testloader:
+        images, labels = images.to(device), labels.to(device)
+        outputs = model(images)
+        _, predicted = torch.max(outputs, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+accuracy = 100 * correct / total
+print(f'Test Accuracy: {accuracy:.2f}%')
+```
+
+## Visualisation des Prédictions
+
+Affichage de quelques images de test avec leurs prédictions :
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+import random
+
+classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+
+random_indices = random.sample(range(len(testset)), 16)
+random_images = torch.stack([testset[i][0] for i in random_indices]).to(device)
+random_labels = torch.tensor([testset[i][1] for i in random_indices]).to(device)
+
+outputs = model(random_images)
+_, predicted = torch.max(outputs, 1)
+
+fig, axes = plt.subplots(4, 4, figsize=(12, 12))
+for i, ax in enumerate(axes.flat):
+    title = f"Pred: {classes[predicted[i]]}\nVrai: {classes[random_labels[i]]}"
+    ax.imshow(np.transpose((random_images[i].cpu() / 2 + 0.5).numpy(), (1, 2, 0)))
+    ax.set_title(title, fontsize=10, color='green' if predicted[i] == random_labels[i] else 'red')
+    ax.axis('off')
+plt.show()
+```
+
+## Utilisation
+
+Pour exécuter le script :
+
+```bash
+python train_regnet.py
+```
+
+## Exemple de Résultat
+
+L'affichage montre une grille de 16 images avec leurs prédictions :
+
+![Exemple de Prédiction](example_output.png)
+
+## Améliorations Possibles
+
+- Expérimenter avec **d'autres architectures** (EfficientNet, ViTs, etc.)
+- Tester des **augmentations de données** pour améliorer la robustesse
+- Fine-tuning avec des **poids préentraités**
+
+---
+
+Projet développé dans le cadre d'une expérimentation sur **RegNet et ResNet**, avec l'intégration de **ConvGRU et ConvRNN** pour la classification d'images.
+
+
+
 
 ### Installation
 
