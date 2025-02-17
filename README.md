@@ -1,5 +1,5 @@
 
-## Partie 1 : ResNet20 pour la Classification CIFAR-10
+## Partie 1 : ResNet20 pour la Classification 
 
 Ce dépôt contient une implémentation de **ResNet** pour la classification d'images sur le dataset **CIFAR-10**. **ResNet20** est une version simplifiée de l'architecture **ResNet** (Residual Network), utilisée pour résoudre les problèmes de dégradation des performances dans les réseaux de neurones profonds. L'implémentation est faite en utilisant **PyTorch**.
 
