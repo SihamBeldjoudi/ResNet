@@ -176,6 +176,7 @@ class ConvRNN(nn.Module):
 #### ResNet + ConvGRU
 
 Le modèle **ResNet + ConvGRU** améliore le ConvRNN en ajoutant des **portes de mise à jour et de réinitialisation**, permettant une meilleure gestion des informations passées.  
+Le ConvGRU est implémenté comme décrit dans Ballas et al. 2015 : *Delving Deeper into Convolutional Networks for Learning Video Representations*.
 
 Voici l'implémentation de `ConvGRU` en PyTorch :
 
