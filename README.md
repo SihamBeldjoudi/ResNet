@@ -238,7 +238,7 @@ transform = transforms.Compose([
 ])
 ```
 
-Nous chargeons les jeux de données CIFAR-10 et notre propre base de données de 4 classes :
+Nous chargeons soit les jeux de données CIFAR-10 soit notre propre base de données de 4 classes :
 
 ```python
 import torchvision
@@ -354,25 +354,10 @@ for i, ax in enumerate(axes.flat):
 plt.show()
 ```
 
-## Utilisation
-
-Pour exécuter le script :
-
-```bash
-python train_regnet.py
-```
-
-## Exemple de Résultat
-
-L'affichage montre une grille de 16 images avec leurs prédictions :
-
-![Exemple de Prédiction](example_output.png)
-
 ## Améliorations Possibles
 
-- Expérimenter avec **d'autres architectures** (EfficientNet, ViTs, etc.)
+- Expérimenter avec **d'autres datasets comme ImageNet qui a ete utilisee dans l'article**. Cela necessite le materiel adecquat pour ce genre d'application.
 - Tester des **augmentations de données** pour améliorer la robustesse
-- Fine-tuning avec des **poids préentraités**
 
 ---
 
