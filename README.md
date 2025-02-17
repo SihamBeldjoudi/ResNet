@@ -170,9 +170,7 @@ Une couche récurrente convolutive `ConvRNN` a été définie et intégrée dans
 
 #### ResNet + ConvRNN
 
-Le modèle **ResNet + ConvRNN** intègre une couche récurrente convolutive simple, permettant de capturer les dépendances spatiales dans l'image. L'équation de mise à jour de l'état caché est donnée par :
-
-\[ H^t = \tanh( W_h * [X^t, H^{t-1}] + b_h ) \]
+Le modèle **ResNet + ConvRNN** intègre une couche récurrente convolutive simple, permettant de capturer les dépendances spatiales dans l'image. 
 
 Voici l'implémentation de `ConvRNN` en PyTorch :
 
@@ -194,16 +192,7 @@ class ConvRNN(nn.Module):
 
 #### ResNet + ConvGRU
 
-Le modèle **ResNet + ConvGRU** améliore le ConvRNN en ajoutant des **portes de mise à jour et de réinitialisation**, permettant une meilleure gestion des informations passées. Les équations de mise à jour sont :
-
-\[
-\begin{aligned}
-    z^t &= \sigma(W_z * [X^t, H^{t-1}] + b_z) \\
-    r^t &= \sigma(W_r * [X^t, H^{t-1}] + b_r) \\
-    \tilde{H}^t &= \tanh(W_h * [X^t, (r^t \odot H^{t-1})] + b_h) \\
-    H^t &= (1 - z^t) \odot H^{t-1} + z^t \odot \tilde{H}^t
-\end{aligned}
-\]
+Le modèle **ResNet + ConvGRU** améliore le ConvRNN en ajoutant des **portes de mise à jour et de réinitialisation**, permettant une meilleure gestion des informations passées.  
 
 Voici l'implémentation de `ConvGRU` en PyTorch :
 
