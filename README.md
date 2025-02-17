@@ -237,7 +237,7 @@ Les modèles entraînés ont ensuite été évalués sur CIFAR-10, et leurs pré
 Clonez le dépôt :
 
 ```bash
-git clone https://github.com/SihamBeldjoudi/ResNet.git
+git clone https://github.com/SihamBeldjoudi/ResNet-RNN_RegNet.git
 cd ResNet20-CIFAR10
 ```
 
