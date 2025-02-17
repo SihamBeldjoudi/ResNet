@@ -1,5 +1,5 @@
 
-# ResNet20 pour la Classification CIFAR-10
+## Partie 1 : ResNet20 pour la Classification CIFAR-10
 
 Ce dépôt contient une implémentation de **ResNet** pour la classification d'images sur le dataset **CIFAR-10**. **ResNet20** est une version simplifiée de l'architecture **ResNet** (Residual Network), utilisée pour résoudre les problèmes de dégradation des performances dans les réseaux de neurones profonds. L'implémentation est faite en utilisant **PyTorch**.
 
@@ -150,16 +150,47 @@ Après l'entraînement, des images sont sélectionnées aléatoirement à partir
 
 ---
 
-## Installation
 
-### Prérequis
+## Partie 1 : Introduction
+Dans ce projet, l'utilisation de réseaux de neurones récurrents convolutifs (ConvRNN) et de variantes comme le ConvGRU pour la classification d'images a été explorée. L'objectif est d'intégrer des mémoires récurrentes dans un modèle de type ResNet afin d'exploiter des informations temporelles dans les données d'image. PyTorch a été utilisé pour l'implémentation, et le modèle a été testé sur le dataset CIFAR-10.
 
-1. Python 3.x
-2. PyTorch
-3. torchvision
-4. matplotlib
-5. numpy
-6. random
+## Partie 2 : Implémentation du Modèle Basé sur RegNet
+
+### Contexte
+L'approche s'inspire de l'article *"RegNet: Self-Regulated Network for Image Classification"* de Jing Xu et al., qui propose l'utilisation d'un module récurrent auto-régulé pour affiner l'extraction des caractéristiques. Nous avons incorporé cette idée en intégrant des mécanismes récurrents aux blocs d'un ResNet.
+
+### Méthodologie
+Une couche récurrente convolutive `ConvRNN` a été définie et intégrée dans un bloc de ResNet (`BasicRNNBlock`). Une variante plus avancée, `ConvGRU`, a également été testée.
+
+**Structures mises en place :**
+
+- **ConvRNN** : Applique une récurrence sur des cartes de caractéristiques convolutives.
+- **BasicRNNBlock** : Bloc de ResNet modifié avec une couche récurrente (`ConvRNN` ou `ConvGRU`).
+- **ResNetRNN** : Architecture ResNet intégrant ces blocs récurrents.
+
+### Variantes explorées
+
+#### ResNet + ConvRNN
+\[ H^t = \tanh( W_h * [X^t, H^{t-1}] + b_h ) \]
+
+#### ResNet + ConvGRU
+\[
+\begin{aligned}
+z^t &= \sigma(W_z * [X^t, H^{t-1}] + b_z) \\
+r^t &= \sigma(W_r * [X^t, H^{t-1}] + b_r) \\
+\tilde{H}^t &= \tanh(W_h * [X^t, (r^t \odot H^{t-1})] + b_h) \\
+H^t &= (1 - z^t) \odot H^{t-1} + z^t \odot \tilde{H}^t
+\end{aligned}
+\]
+
+### Entraînement et évaluation
+L'entraînement a été réalisé via la fonction `train_model`, en testant :
+
+1. **ConvRNN** comme module récurrent de base.
+2. **ConvGRU**, une alternative plus avancée et performante.
+
+Les modèles entraînés ont ensuite été évalués sur CIFAR-10, et leurs prédictions ont été visualisées.
+
 
 ### Installation
 
