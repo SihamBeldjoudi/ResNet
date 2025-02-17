@@ -238,7 +238,6 @@ Clonez le dépôt :
 
 ```bash
 git clone https://github.com/SihamBeldjoudi/ResNet-RNN_RegNet.git
-cd ResNet20-CIFAR10
 ```
 
 Installez les dépendances :
